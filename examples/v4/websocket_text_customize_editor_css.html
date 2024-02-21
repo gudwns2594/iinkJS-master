@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="HandheldFriendly" content="true"/>
+
+  <title>Styling editor style</title>
+
+  <link rel="stylesheet" href="../examples.css">
+  <link rel="stylesheet" href="./my-custom-class.css">
+
+  <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+  <script type="text/javascript" src="../../dist/iink.min.js"></script>
+</head>
+
+<body>
+<div>
+  <nav>
+    <div class="button-div">
+      <button id="undo" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
+        <img src="../assets/img/undo.svg">
+      </button>
+      <button id="redo" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
+        <img src="../assets/img/redo.svg">
+      </button>
+    </div>
+  </nav>
+  <div id="editor" touch-action="none"></div>
+</div>
+<script>
+  const editorElement = document.getElementById('editor');
+  const undoElement = document.getElementById('undo');
+  const redoElement = document.getElementById('redo');
+
+  editorElement.addEventListener('changed', (event) => {
+    undoElement.disabled = !event.detail.canUndo;
+    redoElement.disabled = !event.detail.canRedo;
+  });
+
+  undoElement.addEventListener('click', () => {
+    editorElement.editor.undo();
+  });
+  redoElement.addEventListener('click', () => {
+    editorElement.editor.redo();
+  });
+
+  /**
+   * Attach an editor to the document
+   * @param {Element} The DOM element to attach the ink paper
+   * @param {Object} The recognition parameters
+   */
+  const configuration = {
+    recognitionParams: {
+      type: 'TEXT',
+      protocol: 'WEBSOCKET',
+      server: {
+        scheme: 'https',
+        host: 'webdemoapi.myscript.com',
+        applicationKey: '4f30b2c1-98a8-4890-b1f3-08a75983b2e5',
+        hmacKey: '88d28c1e-8133-4fe6-9192-d2d9e863bd10'
+      },
+      iink: {
+        export: {
+          jiix: {
+            strokes: true
+          }
+        }
+      }
+    }
+  };
+  const penStyle = {
+    color: '#ffffff'
+  };
+  const theme = {
+    ink: {
+      color: '#ffffff',
+    }
+  };
+  const globalClassCSS = 'my-custom-class';
+  iink.register(editorElement, configuration, penStyle, theme, null, globalClassCSS);
+
+  window.addEventListener('resize', () => {
+    editorElement.editor.resize();
+  });
+</script>
+</body>
+
+</html>

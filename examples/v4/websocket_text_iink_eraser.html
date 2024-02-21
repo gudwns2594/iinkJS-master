@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="HandheldFriendly" content="true"/>
+
+  <title>WEBSOCKET Text iink Eraser</title>
+
+  <link rel="stylesheet" href="../examples.css">
+
+  <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+  <script type="text/javascript" src="../../dist/iink.min.js"></script>
+</head>
+
+<body>
+<div>
+  <nav>
+    <div class="button-div">
+      <button id="undo" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
+        <img src="../assets/img/undo.svg">
+      </button>
+      <button id="redo" class="nav-btn btn-fab-mini btn-lightBlue" disabled>
+        <img src="../assets/img/redo.svg">
+      </button>
+    </div>
+    <div class="button-div">
+      <button id="pen" class="nav-btn btn-fab-mini btn-primary active" disabled>
+        <img src="../assets/img/pen.svg">
+      </button>
+      <button id="eraser" class="nav-btn btn-fab-mini btn-primary">
+        <img src="../assets/img/eraser.svg">
+      </button>
+    </div>
+    <label for="erase-precisely">Erase precisely:
+      <input type="checkbox" id="erase-precisely" name="erase-precisely">
+    </label>
+  </nav>
+  <div id="editor" touch-action="none"></div>
+</div>
+<script>
+  const editorElement = document.getElementById('editor');
+
+  const undoElement = document.getElementById('undo');
+  const redoElement = document.getElementById('redo');
+  const eraserElement = document.getElementById('eraser');
+  const penElement = document.getElementById('pen');
+  const erasePreciselyElement = document.getElementById('erase-precisely');
+
+  editorElement.addEventListener('changed', (event) => {
+    undoElement.disabled = !event.detail.canUndo;
+    redoElement.disabled = !event.detail.canRedo;
+  });
+
+  undoElement.addEventListener('click', () => {
+    editorElement.editor.undo();
+  });
+  redoElement.addEventListener('click', () => {
+    editorElement.editor.redo();
+  });
+
+  eraserElement.addEventListener('click', () => {
+    editorElement.editor.enableEraser();
+    eraserElement.disabled = true;
+    eraserElement.classList.add('active')
+    penElement.disabled = false;
+    penElement.classList.remove('active')
+  });
+  penElement.addEventListener('click', () => {
+    editorElement.editor.disableEraser();
+    eraserElement.disabled = false;
+    eraserElement.classList.remove('active')
+    penElement.disabled = true;
+    penElement.classList.add('active')
+  });
+
+  erasePreciselyElement.addEventListener('change', (e) => {
+    const configuration = { ... editorElement.editor.configuration };
+    configuration.recognitionParams.iink.text.eraser['erase-precisely'] = e.target.checked;
+    editorElement.editor.configuration = configuration
+  })
+
+  /**
+   * Attach an editor to the document
+   * @param {Element} The DOM element to attach the ink paper
+   * @param {Object} The recognition parameters
+   */
+  iink.register(editorElement, {
+    recognitionParams: {
+      type: 'TEXT',
+      protocol: 'WEBSOCKET',
+      server: {
+        scheme: 'https',
+        host: 'webdemoapi.myscript.com',
+        applicationKey: '4f30b2c1-98a8-4890-b1f3-08a75983b2e5',
+        hmacKey: '88d28c1e-8133-4fe6-9192-d2d9e863bd10'
+      },
+      iink: {
+        export: {
+          jiix: {
+            strokes: true
+          }
+        },
+        text: {
+          eraser: {
+            'erase-precisely': false
+          }
+        },
+      }
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    editorElement.editor.resize();
+  });
+</script>
+</body>
+
+</html>

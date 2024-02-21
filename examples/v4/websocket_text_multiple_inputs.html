@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="HandheldFriendly" content="true"/>
+
+  <title>Multiple inputs</title>
+
+  <link rel="stylesheet" href="../examples.css">
+
+  <style>
+    #editor {
+      border-radius: 6px;
+    }
+
+    nav {
+      position: fixed;
+      width: 100%;
+      background-color: white;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      padding: 96px 24px 24px;
+    }
+
+    .input {
+      z-index: 20;
+      font-size: 36px;
+      margin-left: 24px;
+      margin-bottom: 24px;
+      width: calc(100% - 48px);
+      height: 150px;
+      border: 1px #bfbfbf solid;
+      border-radius: 6px;
+    }
+
+    .input > svg {
+      position: absolute;
+    }
+
+    .editor {
+      display: none;
+    }
+  </style>
+
+  <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+  <script type="text/javascript" src="../../dist/iink.min.js"></script>
+</head>
+
+<body>
+<div>
+  <nav>
+    <button class="classic-btn" id="convert" disabled>Convert</button>
+  </nav>
+  <main id="mainContent">
+  </main>
+  <div id="editor" class="editor" touch-action="none"></div>
+  <div id="editor2" class="editor" touch-action="none"></div>
+</div>
+<script src="./websocket_text_multiple_inputs.js"></script>
+</body>
+</html>
